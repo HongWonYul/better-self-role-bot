@@ -94,4 +94,31 @@ async def on_ready():
     print(f'Currenly running nextcord {nextcord.__version__} on python {platform.python_version()}')
     print('======================================')
 
+@client.slash_command(name='test', description='test command', dm_permission=False, default_member_permissions=8)
+async def test(interaction: Interaction):
+    selection = [
+        nextcord.SelectOption(label='Option 1', value='1'),
+        nextcord.SelectOption(label='Option 2', value='2'),
+        nextcord.SelectOption(label='Option 3', value='3'),
+    ]
+
+    view = DropdownMenu(selection)
+
+    await interaction.response.send_message('test', view=view)
+
+class Dropdown(nextcord.ui.Select):
+    def __init__(self, options):
+        super().__init__(placeholder='Select a option', options=options)
+
+    async def callback(self, interaction: Interaction):
+        await interaction.response.send_message(f'You selected {self.values}')
+        super().__init__(placeholder='Select a category')
+
+class DropdownMenu(nextcord.ui.View):
+    def __init__(self, options):
+        super().__init__()
+        self.add_item(Dropdown(options))
+
+
+
 client.run(token)
